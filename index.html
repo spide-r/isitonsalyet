@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta property="og:title" content="Is It Onsal Yet?">
+  <meta property="og:description" content="Check what frontline Map it is today.">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Is it Onsal Yet?</title>
+
+</head>
+<body>
+<main id="m">
+    <h1>Is it Onsal Yet?</h1>
+    <h2 id="yes-no"></h2>
+</main>
+<p id="timer-onsal"></p>
+<p id="timer-secure"></p>
+<p id="timer-seal"></p>
+<p id="timer-shatter"></p>
+
+<script>
+    const startOfOnsal = 1763650800;
+    const secsInDay = (24 * 60 * 60);
+    const cycleLength = 4 * secsInDay;
+    function showTime() {
+
+        const currentUnixTime = Math.floor(Date.now() / 1000);
+        const timeSinceStartOfCycle = currentUnixTime - startOfOnsal;
+        const posInCycleSec = timeSinceStartOfCycle % cycleLength;
+        const position = Math.floor(posInCycleSec / secsInDay);
+
+        let message = "";
+
+        switch (position) {
+            case 0:
+                message = "Yes!";
+                break;
+            case 1:
+                message = "No. It is currently The Borderland Ruins (Secure)";
+                break;
+            case 2:
+                message = "No. It is currently Seal Rock (Seize)";
+                break;
+            case 3:
+                message = "No. It is currently The Fields of Glory (Shatter)"
+                break;
+            default:
+                message = "I don't know what day it is!";
+        }
+
+
+        document.getElementById('yes-no').textContent = message;
+
+        function getNextDay(day) {
+            if (day === position) {
+                return "Happening now."
+            }
+            const targetStartTime = day * secsInDay;
+            const timeUntilStart = (targetStartTime - posInCycleSec + cycleLength) % cycleLength
+            const distance = timeUntilStart * 1000;
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            const d = new Date(Date.now() + distance)
+
+            return d.toDateString() + " in " + days + "d " + hours + "h "
+                + minutes + "m " + seconds + "s ";
+        }
+
+        document.getElementById('timer-onsal').textContent = "Onsal: " + getNextDay(0);
+        document.getElementById('timer-secure').textContent = "Secure: " + getNextDay(1);
+        document.getElementById('timer-seal').textContent = "Seal Rock: " + getNextDay(2);
+        document.getElementById('timer-shatter').textContent = "Shatter: " + getNextDay(3);
+
+    }
+
+    showTime()
+    const interval = setInterval(showTime, 1000);
+
+
+</script>
+</body>
+<!-- Hey Friend! Simplicity Inspired by https://motherfuckingwebsite.com/-->
+</html>
