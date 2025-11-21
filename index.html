@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
   <meta property="og:title" content="Is It Onsal Yet?">
-  <meta property="og:description" content="Check what frontline Map it is today.">
+  <meta property="og:description" content="Check what frontline map it is today.">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Is it Onsal Yet?</title>
-
 </head>
+
 <body>
 <main id="m">
     <h1>Is it Onsal Yet?</h1>
@@ -18,67 +18,113 @@
 <p id="timer-seal"></p>
 <p id="timer-shatter"></p>
 
+<label for="chosen-date">Select a date in the future: </label><input type="datetime-local" id="chosen-date" name="selectedDate">
+
+<p id="map"></p>
+
 <script>
     const startOfOnsal = 1763650800;
     const secsInDay = (24 * 60 * 60);
     const cycleLength = 4 * secsInDay;
     function showTime() {
-
-        const currentUnixTime = Math.floor(Date.now() / 1000);
-        const timeSinceStartOfCycle = currentUnixTime - startOfOnsal;
-        const posInCycleSec = timeSinceStartOfCycle % cycleLength;
-        const position = Math.floor(posInCycleSec / secsInDay);
-
+        const position = getDay()
         let message = "";
-
         switch (position) {
             case 0:
                 message = "Yes!";
                 break;
-            case 1:
-                message = "No. It is currently The Borderland Ruins (Secure)";
-                break;
-            case 2:
-                message = "No. It is currently Seal Rock (Seize)";
-                break;
-            case 3:
-                message = "No. It is currently The Fields of Glory (Shatter)"
-                break;
             default:
-                message = "I don't know what day it is!";
+                message = "No. It is currently " + getDayStr(position);
         }
 
 
         document.getElementById('yes-no').textContent = message;
 
-        function getNextDay(day) {
-            if (day === position) {
-                return "Happening now."
-            }
-            const targetStartTime = day * secsInDay;
-            const timeUntilStart = (targetStartTime - posInCycleSec + cycleLength) % cycleLength
-            const distance = timeUntilStart * 1000;
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            const d = new Date(Date.now() + distance)
-
-            return d.toDateString() + " in " + days + "d " + hours + "h "
-                + minutes + "m " + seconds + "s ";
-        }
-
-        document.getElementById('timer-onsal').textContent = "Onsal: " + getNextDay(0);
-        document.getElementById('timer-secure').textContent = "Secure: " + getNextDay(1);
-        document.getElementById('timer-seal').textContent = "Seal Rock: " + getNextDay(2);
-        document.getElementById('timer-shatter').textContent = "Shatter: " + getNextDay(3);
-
+        document.getElementById('timer-onsal').textContent = getTimer(0);
+        document.getElementById('timer-secure').textContent = getTimer(1);
+        document.getElementById('timer-seal').textContent = getTimer(2);
+        document.getElementById('timer-shatter').textContent = getTimer(3);
     }
 
+
+    function getNextDay(day) {
+        if (day === getDay()) {
+            return "Happening now."
+        }
+        const currentUnixTime = Math.floor(Date.now() / 1000);
+        const timeSinceStartOfCycle = currentUnixTime - startOfOnsal;
+        const posInCycleSec = timeSinceStartOfCycle % cycleLength;
+        const targetStartTime = day * secsInDay;
+        const timeUntilStart = (targetStartTime - posInCycleSec + cycleLength) % cycleLength
+        const distance = timeUntilStart * 1000;
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        const d = new Date(Date.now() + distance)
+
+        return d.toDateString() + " in " + days + "d " + hours + "h "
+            + minutes + "m " + seconds + "s ";
+    }
+
+    function getTimer(day){
+        return getDayStr(day) + ": " + getNextDay(day);
+    }
+
+    function getDay(){
+        const currentUnixTime = Math.floor(Date.now() / 1000);
+        return getDayAtTime(currentUnixTime);
+    }
+
+    function getDayAtTime(unixTime){
+        const timeSinceStartOfCycle = unixTime - startOfOnsal;
+        const posInCycleSec = timeSinceStartOfCycle % cycleLength;
+        return Math.floor(posInCycleSec / secsInDay);
+    }
+
+    function getDayStr(day){
+        switch (day) {
+            case 0:
+                return "Onsal Hakair (Danshig Naadam)";
+            case 1:
+                return "The Borderland Ruins (Secure)";
+            case 2:
+                return "Seal Rock (Seize)";
+            case 3:
+                return "The Fields of Glory (Shatter)"
+            default:
+                return "Unknown";
+        }
+    }
     showTime()
     const interval = setInterval(showTime, 1000);
+    const dateControl =  document.getElementById('chosen-date');
+    dateControl.addEventListener('change', setTimeForCal)
+
+    function setTimeForCal(){
+        const dateControl =  document.getElementById('chosen-date');
+        const unixDate = Math.floor(new Date(dateControl.value).getTime() / 1000)
+        const day = getDayAtTime(unixDate);
+        if(getDayStr(day) === "Unknown" ){
+            return;
+        }
+        //document.getElementById('map').textContent = unixDate.toString()
+        document.getElementById('map').textContent = "At that time, the active map is: " + getDayStr(day)
+    }
+
+    setTimeForCal()
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const dateTimeInput = document.getElementById('datetime-picker');
+        const now = new Date();
+        const offset = now.getTimezoneOffset() * 60 * 1000;
+        dateTimeInput.min = (new Date(now - offset)).toISOString().slice(0, 16);
+    });
+
 </script>
+
 </body>
-<!-- Hey Friend! Simplicity Inspired by https://motherfuckingwebsite.com/. Find me on Github: https://github.com/spide-r/isitonsalyet -->
+<!-- Hey Friend! Simplicity Inspired by https://motherfuckingwebsite.com/. Find me on GitHub: https://github.com/spide-r/isitonsalyet -->
 </html>
