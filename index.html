@@ -31,7 +31,8 @@
 <script>
     const startOfOnsal = 1763650800;
     const secsInDay = (24 * 60 * 60);
-    const cycleLength = 5 * secsInDay;
+    const days = 4;
+    const cycleLength = days * secsInDay;
     function showTime() {
         const position = getDay()
         let message = "";
@@ -40,7 +41,7 @@
                 message = "Yes!";
                 break;
             default:
-                message = "No. It is currently " + getDayStr(position);
+                message = "No. It is currently " + getDayStr(position) + " and Worqor Chirteh (Triumph)";
         }
 
 
@@ -57,6 +58,9 @@
     function getNextDay(day) {
         if (day === getDay()) {
             return "Happening now."
+        }
+        if(day === 4){
+            return "Happening always!"
         }
         const currentUnixTime = Math.floor(Date.now() / 1000);
         const timeSinceStartOfCycle = currentUnixTime - startOfOnsal;
