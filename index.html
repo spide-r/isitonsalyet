@@ -14,11 +14,13 @@
     <h1>Is it Onsal Yet?</h1>
     <h2 id="yes-no"></h2>
 </main>
-<p id="timer-onsal"></p>
-<p id="timer-secure"></p>
 <p id="timer-seal"></p>
 <p id="timer-shatter"></p>
+<p id="timer-onsal"></p>
 <p id="timer-worqor"></p>
+<p id="timer-seal2"></p>
+<p id="timer-secure"></p>
+<p id="timer-onsal2"></p>
 <br>
 <h3>Day Checker:</h3>
 <label for="chosen-date">Select a date and time in the future: </label><input type="datetime-local" id="chosen-date" name="selectedDate">
@@ -29,29 +31,31 @@
 
 <sub>Made by </sub><sub><a href = "https://bsky.app/profile/spiiiiiiiiider.bsky.social">A. S. @ Zalera</a></sub>
 <script>
-    const startOfOnsal = 1763650800;
+    const startOfCycle = 1783530000;
     const secsInDay = (24 * 60 * 60);
-    const days = 4;
+    const days = 7;
     const cycleLength = days * secsInDay;
+
+    const ONSAL_DAYS = [2, 6];
+
     function showTime() {
         const position = getDay()
         let message = "";
-        switch (position) {
-            case 0:
-                message = "Yes!";
-                break;
-            default:
-                message = "No. It is currently " + getDayStr(position) + " and Worqor Chirteh (Triumph)";
+        if (ONSAL_DAYS.includes(position)) {
+            message = "Yes!";
+        } else {
+            message = "No. It is currently " + getDayStr(position);
         }
-
 
         document.getElementById('yes-no').textContent = message;
 
-        document.getElementById('timer-onsal').textContent = getTimer(0);
-        document.getElementById('timer-secure').textContent = getTimer(1);
-        document.getElementById('timer-seal').textContent = getTimer(2);
-        document.getElementById('timer-shatter').textContent = getTimer(3);
-        document.getElementById('timer-worqor').textContent = getTimer(4);
+        document.getElementById('timer-seal').textContent = getTimer(0);
+        document.getElementById('timer-shatter').textContent = getTimer(1);
+        document.getElementById('timer-onsal').textContent = getTimer(2);
+        document.getElementById('timer-worqor').textContent = getTimer(3);
+        document.getElementById('timer-seal2').textContent = getTimer(4);
+        document.getElementById('timer-secure').textContent = getTimer(5);
+        document.getElementById('timer-onsal2').textContent = getTimer(6);
     }
 
 
@@ -59,11 +63,8 @@
         if (day === getDay()) {
             return "Happening now."
         }
-        if(day === 4){
-            return "Happening always!"
-        }
         const currentUnixTime = Math.floor(Date.now() / 1000);
-        const timeSinceStartOfCycle = currentUnixTime - startOfOnsal;
+        const timeSinceStartOfCycle = currentUnixTime - startOfCycle;
         const posInCycleSec = timeSinceStartOfCycle % cycleLength;
         const targetStartTime = day * secsInDay;
         const timeUntilStart = (targetStartTime - posInCycleSec + cycleLength) % cycleLength
@@ -90,7 +91,7 @@
     }
 
     function getDayAtTime(unixTime){
-        const timeSinceStartOfCycle = unixTime - startOfOnsal;
+        const timeSinceStartOfCycle = unixTime - startOfCycle;
         const posInCycleSec = timeSinceStartOfCycle % cycleLength;
         return Math.floor(posInCycleSec / secsInDay);
     }
@@ -98,15 +99,19 @@
     function getDayStr(day){
         switch (day) {
             case 0:
-                return "Onsal Hakair (Danshig Naadam)";
-            case 1:
-                return "The Borderland Ruins (Secure)";
-            case 2:
                 return "Seal Rock (Seize)";
+            case 1:
+                return "The Fields of Glory (Shatter)";
+            case 2:
+                return "Onsal Hakair (Danshig Naadam)";
             case 3:
-                return "The Fields of Glory (Shatter)"
-            case 4:
                 return "Worqor Chirteh (Triumph)"
+            case 4:
+                return "Seal Rock (Seize)"
+            case 5:
+                return "The Borderland Ruins (Secure)"
+            case 6:
+                return "Onsal Hakair (Danshig Naadam)"
             default:
                 return "Unknown";
         }
