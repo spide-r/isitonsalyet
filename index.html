@@ -15,12 +15,13 @@
     <h2 id="yes-no"></h2>
 </main>
 <p id="timer-seal"></p>
-<p id="timer-shatter"></p>
+<p id="timer-secure"></p>
 <p id="timer-onsal"></p>
 <p id="timer-worqor"></p>
 <p id="timer-seal2"></p>
-<p id="timer-secure"></p>
+<p id="timer-shatter"></p>
 <p id="timer-onsal2"></p>
+<p id="timer-worqor2"></p>
 <br>
 <h3>Day Checker:</h3>
 <label for="chosen-date">Select a date and time in the future: </label><input type="datetime-local" id="chosen-date" name="selectedDate">
@@ -31,9 +32,9 @@
 
 <sub>Made by </sub><sub><a href = "https://bsky.app/profile/spiiiiiiiiider.bsky.social">A. S. @ Zalera</a></sub>
 <script>
-    const startOfCycle = 1783530000;
+    const startOfCycle = 1777302000;
     const secsInDay = (24 * 60 * 60);
-    const days = 7;
+    const days = 8;
     const cycleLength = days * secsInDay;
 
     const ONSAL_DAYS = [2, 6];
@@ -50,12 +51,13 @@
         document.getElementById('yes-no').textContent = message;
 
         document.getElementById('timer-seal').textContent = getTimer(0);
-        document.getElementById('timer-shatter').textContent = getTimer(1);
+        document.getElementById('timer-secure').textContent = getTimer(1);
         document.getElementById('timer-onsal').textContent = getTimer(2);
         document.getElementById('timer-worqor').textContent = getTimer(3);
         document.getElementById('timer-seal2').textContent = getTimer(4);
-        document.getElementById('timer-secure').textContent = getTimer(5);
+        document.getElementById('timer-shatter').textContent = getTimer(5);
         document.getElementById('timer-onsal2').textContent = getTimer(6);
+        document.getElementById('timer-worqor2').textContent = getTimer(7);
     }
 
 
@@ -92,7 +94,7 @@
 
     function getDayAtTime(unixTime){
         const timeSinceStartOfCycle = unixTime - startOfCycle;
-        const posInCycleSec = timeSinceStartOfCycle % cycleLength;
+        const posInCycleSec = ((timeSinceStartOfCycle % cycleLength) + cycleLength) % cycleLength;
         return Math.floor(posInCycleSec / secsInDay);
     }
 
@@ -101,7 +103,7 @@
             case 0:
                 return "Seal Rock (Seize)";
             case 1:
-                return "The Fields of Glory (Shatter)";
+                return "The Borderland Ruins (Secure)";
             case 2:
                 return "Onsal Hakair (Danshig Naadam)";
             case 3:
@@ -109,9 +111,11 @@
             case 4:
                 return "Seal Rock (Seize)"
             case 5:
-                return "The Borderland Ruins (Secure)"
+                return "The Fields of Glory (Shatter)"
             case 6:
                 return "Onsal Hakair (Danshig Naadam)"
+            case 7:
+                return "Worqor Chirteh (Triumph)"
             default:
                 return "Unknown";
         }
@@ -135,7 +139,7 @@
     setTimeForCal()
 
     document.addEventListener('DOMContentLoaded', () => {
-        const dateTimeInput = document.getElementById('datetime-picker');
+        const dateTimeInput = document.getElementById('chosen-date');
         const now = new Date();
         const offset = now.getTimezoneOffset() * 60 * 1000;
         dateTimeInput.min = (new Date(now - offset)).toISOString().slice(0, 16);
